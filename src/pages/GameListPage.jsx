@@ -7,6 +7,9 @@ function GameListPage({ session }) {
   const [title, setTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+  }
   async function fetchGames() {
     const { data } = await supabase.from("games").select("*");
     setGames(data ?? []);
@@ -36,7 +39,10 @@ function GameListPage({ session }) {
   }, []);
   return (
     <div className="max-w-xl mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6">積みゲー一覧</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">ツミゲ</h1>
+        <Button variant="outline" onClick={handleSignOut}>ログアウト</Button>
+      </div>
       <form onSubmit={addGame} className="flex gap-2 mb-6">
         <input
           value={title}
