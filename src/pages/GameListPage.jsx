@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import supabase from "../lib/supabase";
 import { Button } from "@/components/ui/button";
+import GameCard from "../components/GameCard";
 
 function GameListPage({ session }) {
   const [games, setGames] = useState([]);
@@ -9,11 +10,6 @@ function GameListPage({ session }) {
   const [editingTitle, setEditingTitle] = useState("");
   async function handleSignOut() {
     await supabase.auth.signOut();
-  }
-  function nextStatus(current) {
-    if (current === "unplayed") return "playing";
-    if (current === "playing") return "cleared";
-    return "unplayed";
   }
   async function fetchGames() {
     const { data } = await supabase
@@ -68,48 +64,16 @@ function GameListPage({ session }) {
       </form>
       <div className="space-y-2">
         {games.map((game) => (
-          <div key={game.id} className="flex flex-col gap-2 p-3 border rounded">
-            <div className="flex items-center gap-2">
-              <span className="font-medium flex-1">{game.title}</span>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => updateStatus(game.id, nextStatus(game.status))}
-                  className={
-                    game.status === "playing"
-                      ? "border-blue-500 text-blue-500"
-                      : game.status === "cleared"
-                        ? "border-green-600 text-green-600"
-                        : "text-gray-500"
-                  }
-                >
-                  {game.status === "unplayed"
-                    ? "未プレイ"
-                    : game.status === "playing"
-                      ? "プレイ中"
-                      : "クリア済み"}
-                </Button>
-                <div className="flex gap-1">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setEditingId(game.id);
-                      setEditingTitle(game.title);
-                    }}
-                  >
-                    編集
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => deleteGame(game.id)}
-                  >
-                    削除
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <GameCard
+            key={game.id}
+            game={game}
+            onStatusChange={updateStatus}
+            onEdit={() => {
+              setEditingId(game.id);
+              setEditingTitle(game.title);
+            }}
+            onDelete={deleteGame}
+          />
         ))}
       </div>
       {editingId !== null && (
