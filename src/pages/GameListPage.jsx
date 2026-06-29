@@ -16,7 +16,10 @@ function GameListPage({ session }) {
     return "unplayed";
   }
   async function fetchGames() {
-    const { data } = await supabase.from("games").select("*");
+    const { data } = await supabase
+      .from("games")
+      .select("*")
+      .order("created_at", { ascending: true });
     setGames(data ?? []);
   }
   async function addGame(e) {
