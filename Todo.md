@@ -5,7 +5,7 @@
 - [x] ステータスで絞り込み（FilterBar）
 
 ## コンポーネント分割
-- [ ] Header.jsx（タイトル＋ログアウト）
+- [x] Header.jsx（タイトル＋ログアウト）
 - [x] GameCard.jsx（1枚のカード）
 - [x] GameModal.jsx（追加・編集フォームをモーダル化）
 

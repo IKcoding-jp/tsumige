@@ -3,6 +3,7 @@ import supabase from "../lib/supabase";
 import { Button } from "@/components/ui/button";
 import GameCard from "../components/GameCard";
 import GameModal from "../components/GameModal";
+import Header from "../components/Header";
 
 function GameListPage({ session }) {
   const [games, setGames] = useState([]);
@@ -51,12 +52,7 @@ function GameListPage({ session }) {
     filter === "all" ? games : games.filter((game) => game.status === filter);
   return (
     <div className="max-w-xl mx-auto p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">ツミゲ</h1>
-        <Button variant="outline" onClick={handleSignOut}>
-          ログアウト
-        </Button>
-      </div>
+      <Header onSignOut={handleSignOut} />
       <form onSubmit={addGame} className="flex gap-2 mb-4">
         <input
           value={title}
