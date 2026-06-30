@@ -13,8 +13,7 @@ function GameListPage({ session }) {
     useGames(session);
   const [title, setTitle] = useState("");
   const [platform, setPlatform] = useState("");
-  const [editingId, setEditingId] = useState(null);
-  const [editingTitle, setEditingTitle] = useState("");
+  const [selectedGame, setSelectedGame] = useState(null);
   const [filter, setFilter] = useState("all");
   const [platformFilter, setPlatformFilter] = useState("all");
   async function handleSignOut() {
@@ -101,20 +100,22 @@ function GameListPage({ session }) {
             key={game.id}
             game={game}
             onStatusChange={updateStatus}
-            onEdit={() => {
-              setEditingId(game.id);
-              setEditingTitle(game.title);
-            }}
-            onDelete={deleteGame}
+            onClick={() => setSelectedGame(game)}
           />
         ))}
       </div>
-      {editingId !== null && (
+      {selectedGame !== null && (
         <GameModal
-          value={editingTitle}
-          onChange={(e) => setEditingTitle(e.target.value)}
-          onCancel={() => setEditingId(null)}
-          onSave={() => updateGame(editingId, editingTitle)}
+          game={selectedGame}
+          onSave={(id, title) => {
+            updateGame(id, title);
+            setSelectedGame(null);
+          }}
+          onDelete={(id) => {
+            deleteGame(id);
+            setSelectedGame(null);
+          }}
+          onCancel={() => setSelectedGame(null)}
         />
       )}
     </div>
