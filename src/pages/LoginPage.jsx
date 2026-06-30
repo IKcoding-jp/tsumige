@@ -1,19 +1,20 @@
 import { useState } from "react";
-import supabase from "../lib/supabase";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../hooks/useAuth";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
-  const [error, setError] = useState(null);
+  const { isLoading, error, login, signUp } = useAuth();
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
-    setError(error?.message ?? null);
+    if (isSignUp) {
+      await signUp(email, password);
+    } else {
+      await login(email, password);
+    }
   }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -34,7 +35,9 @@ function LoginPage() {
             placeholder="パスワード"
             className="border rounded px-3 py-2"
           />
-          <Button type="submit">{isSignUp ? "新規登録" : "ログイン"}</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "処理中..." : isSignUp ? "新規登録" : "ログイン"}
+          </Button>
         </form>
         <Button
           variant="ghost"
@@ -44,7 +47,7 @@ function LoginPage() {
         >
           {isSignUp ? "ログインはこちら" : "新規登録はこちら"}
         </Button>
-        {error && <p>{error}</p>}
+        <p className="text-red-500 text-sm mt-2 min-h-[1.25rem]">{error}</p>
       </div>
     </div>
   );
