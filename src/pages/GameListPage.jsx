@@ -5,12 +5,16 @@ import GameCard from "../components/GameCard";
 import GameModal from "../components/GameModal";
 import Header from "../components/Header";
 
+const PLATFORMS = ["Switch", "PS5", "PS4", "Steam", "PC", "スマホ", "その他"];
+
 function GameListPage({ session }) {
   const [games, setGames] = useState([]);
   const [title, setTitle] = useState("");
+  const [platform, setPlatform] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [filter, setFilter] = useState("all");
+  const [platformFilter, setPlatformFilter] = useState("all");
   async function handleSignOut() {
     await supabase.auth.signOut();
   }
@@ -28,8 +32,10 @@ function GameListPage({ session }) {
       title,
       user_id: session.user.id,
       status: "unplayed",
+      platform: platform || null,
     });
     setTitle("");
+    setPlatform("");
     fetchGames();
   }
   async function deleteGame(id) {
@@ -48,8 +54,17 @@ function GameListPage({ session }) {
   useEffect(() => {
     fetchGames();
   }, []);
-  const visibleGames =
-    filter === "all" ? games : games.filter((game) => game.status === filter);
+  const visibleGames = games.filter((game) => {
+    const statusOk = filter === "all" || game.status === filter;
+
+    const platformOk =
+      platformFilter === "all" ||
+      (platformFilter === "unset"
+        ? !game.platform
+        : game.platform === platformFilter);
+
+    return statusOk && platformOk;
+  });
   return (
     <div className="max-w-xl mx-auto p-8">
       <Header onSignOut={handleSignOut} />
@@ -60,6 +75,18 @@ function GameListPage({ session }) {
           placeholder="ゲームタイトル"
           className="border rounded px-3 py-2 flex-1"
         />
+        <select
+          value={platform}
+          onChange={(e) => setPlatform(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="">未設定</option>
+          {PLATFORMS.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+        </select>
         <Button type="submit">追加</Button>
       </form>
       <div className="flex gap-2 mb-6">
@@ -87,6 +114,19 @@ function GameListPage({ session }) {
         >
           クリア済み
         </Button>
+        <select
+          value={platformFilter}
+          onChange={(e) => setPlatformFilter(e.target.value)}
+          className="border rounded px-3 py-2"
+        >
+          <option value="all">すべて</option>
+          {PLATFORMS.map((p) => (
+            <option key={p} value={p}>
+              {p}
+            </option>
+          ))}
+          <option value="unset">未設定</option>
+        </select>
       </div>
       <div className="space-y-2">
         {visibleGames.map((game) => (

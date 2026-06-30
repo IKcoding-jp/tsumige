@@ -9,6 +9,9 @@ function GameCard({ game, onEdit, onDelete, onStatusChange }) {
   return (
     <div className="flex items-center gap-2 p-3 border rounded">
       <span className="font-medium flex-1">{game.title}</span>
+      <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">
+        {game.platform ?? "未設定"}
+      </span>
       <div className="flex gap-1">
         <Button
           size="sm"
