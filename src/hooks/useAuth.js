@@ -22,6 +22,10 @@ export function useAuth() {
   const [error, setError] = useState(null);
 
   async function login(email, password) {
+    if (!email || !password) {
+      setError("メールとパスワードを入力してください。");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     const { error } = await supabase.auth.signInWithPassword({
